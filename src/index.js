@@ -1,6 +1,6 @@
 import React from "react";
 import {
-    View, Animated, Easing, NativeModules, findNodeHandle
+    View, Animated, Easing, NativeModules, findNodeHandle, ViewPropTypes
 } from "react-native";
 import Scrolling from "react-native-scrolling";
 import PropTypes from "prop-types";
@@ -46,6 +46,7 @@ export default class ViewTransformer extends React.Component {
         onSingleTapConfirmed: PropTypes.func,
         onLayout: PropTypes.func,
         children: PropTypes.node,
+        containerStyle: ViewPropTypes.style,
     };
 
     static defaultProps = {
@@ -160,6 +161,7 @@ export default class ViewTransformer extends React.Component {
 
     render () {
         let gestureResponder = this.gestureResponder;
+        const {containerStyle, ...props} = this.props;
         if (!this.props.enableTransform) {
             gestureResponder = {};
         }
@@ -167,19 +169,19 @@ export default class ViewTransformer extends React.Component {
         return (
             <View
                 style={{flex: 1}}
-                {...this.props}
+                {...props}
                 {...gestureResponder}
                 ref={(component) => (this.innerViewRef = component)}
                 onLayout={this.onLayout}>
                 <View
-                    style={{
+                    style={[{
                         flex: 1,
                         transform: [
                             { scale: this.state.scale },
                             { translateX: this.state.translateX },
                             { translateY: this.state.translateY }
                         ]
-                    }}
+                    }, containerStyle]}
                 >
                     { this.props.children }
                 </View>
